@@ -1,0 +1,52 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+
+export async function getStaticPaths() {
+  return [];
+}
+
+const { slug } = Astro.params;
+
+interface Article {
+  id: number;
+  title: string;
+  slug: string;
+  content: string;
+  excerpt?: string;
+  category?: string;
+  author?: string;
+  cover_image?: string;
+  published_at?: string;
+}
+
+let article: Article | null = null;
+
+try {
+  const API_URL = import.meta.env.API_URL || 'http://localhost:8787';
+  const response = await fetch(`${API_URL}/articles/slug/${slug}`);
+  if (response.ok) {
+    article = await response.json();
+  }
+} catch (e) {
+  article = null;
+}
+
+if (!article) {
+  return Astro.redirect('/404');
+}
+---
+
+<BaseLayout title={article.title}>
+  <article>
+    {article.cover_image && (
+      <img src={article.cover_image} alt={article.title} style="width: 100%; height: auto;" />
+    )}
+    <h1>{article.title}</h1>
+    <div style="color: #666; margin-bottom: 1rem;">
+      {article.author && <span>作者: {article.author}</span>}
+      {article.category && <span> | 分类: {article.category}</span>}
+      {article.published_at && <span> | 发布时间: {new Date(article.published_at).toLocaleDateString()}</span>}
+    </div>
+    <div set:html={article.content} />
+  </article>
+</BaseLayout>

@@ -1,0 +1,71 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+
+interface Article {
+  id: number;
+  title: string;
+  slug: string;
+  content: string;
+  excerpt?: string;
+  category?: string;
+  author?: string;
+  cover_image?: string;
+  published_at?: string;
+}
+
+let articles: Article[] = [];
+
+try {
+  const API_URL = import.meta.env.API_URL || 'http://localhost:8787';
+  const response = await fetch(`${API_URL}/articles?limit=10`);
+  if (response.ok) {
+    articles = await response.json();
+  }
+} catch (e) {
+  articles = [];
+}
+---
+
+<BaseLayout title="新闻网站">
+  <div style="max-width: 1200px; margin: 0 auto; padding: 2rem;">
+    <h1>新闻网站</h1>
+    <p>这是一个基于 Astro v6 和 Hono 的无头 CMS 新闻网站。</p>
+    
+    <div style="margin-top: 2rem;">
+      {articles.length > 0 ? (
+        <div style="display: grid; gap: 2rem; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));">
+          {articles.map((article) => (
+            <article 
+              style="border: 1px solid #eee; border-radius: 8px; padding: 1rem; transition: box-shadow 0.3s;"
+              onmouseenter={(e) => e.currentTarget.style.boxShadow = '0 4px 12px rgba(0,0,0,0.1)'}
+              onmouseleave={(e) => e.currentTarget.style.boxShadow = 'none'}
+            >
+              {article.cover_image && (
+                <img 
+                  src={article.cover_image} 
+                  alt={article.title} 
+                  style="width: 100%; height: 200px; object-fit: cover; border-radius: 4px; margin-bottom: 1rem;"
+                />
+              )}
+              <h2 style="margin: 0 0 0.5rem 0;">
+                <a href={`/articles/${article.slug}`} style="text-decoration: none; color: #333;">
+                  {article.title}
+                </a>
+              </h2>
+              {article.excerpt && <p style="color: #666; margin: 0 0 0.5rem 0;">{article.excerpt}</p>}
+              <div style="color: #999; font-size: 0.875rem;">
+                {article.author && <span>作者: {article.author}</span>}
+                {article.category && <span> | {article.category}</span>}
+                {article.published_at && <span> | {new Date(article.published_at).toLocaleDateString()}</span>}
+              </div>
+            </article>
+          ))}
+        </div>
+      ) : (
+        <div style="text-align: center; padding: 4rem; color: #666;">
+          <p>暂无文章</p>
+        </div>
+      )}
+    </div>
+  </div>
+</BaseLayout>

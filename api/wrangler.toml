@@ -1,0 +1,10 @@
+name = "news-site-api"
+compatibility_date = "2025-03-21"
+
+# [vars]
+# MY_VAR = "my value"
+
+# [[d1_databases]]
+# binding = "DB"
+# database_name = "news-site-db"
+# database_id = "your-database-id"

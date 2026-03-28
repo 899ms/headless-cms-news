@@ -1,0 +1,18 @@
+{
+  "name": "headless-cms-news",
+  "version": "0.0.1",
+  "private": true,
+  "description": "无头CMS新闻网站 - 基于Astro v6、Hono和Cloudflare全栈",
+  "scripts": {
+    "dev:web": "cd web && npm run dev",
+    "dev:api": "cd api && npm run dev",
+    "dev:admin": "cd admin && npm run dev",
+    "build:web": "cd web && npm run build",
+    "build:api": "cd api && npm run deploy",
+    "build:admin": "cd admin && npm run build",
+    "install:all": "cd web && npm install && cd ../api && npm install && cd ../admin && npm install"
+  },
+  "keywords": ["astro", "hono", "cloudflare", "headless-cms", "news"],
+  "author": "",
+  "license": "MIT"
+}
