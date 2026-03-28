@@ -16,7 +16,9 @@ describe('API Tests', () => {
   });
 
   it('should return welcome message on root endpoint', async () => {
-    const res = await app.request('/');
+    const res = await app.request('/', {
+      env: { DB: mockDB as any },
+    });
     expect(res.status).toBe(200);
     const data = await res.json();
     expect(data.message).toBe('欢迎使用新闻网站 API');
@@ -24,7 +26,9 @@ describe('API Tests', () => {
   });
 
   it('should return health status on /health endpoint', async () => {
-    const res = await app.request('/health');
+    const res = await app.request('/health', {
+      env: { DB: mockDB as any },
+    });
     expect(res.status).toBe(200);
     const data = await res.json();
     expect(data.status).toBe('ok');
