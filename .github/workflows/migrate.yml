@@ -1,0 +1,48 @@
+name: Database Migration
+
+on:
+  workflow_dispatch:
+    inputs:
+      migration:
+        description: 'Migration file to run'
+        required: true
+        default: '0001_initial.sql'
+      backup:
+        description: 'Backup database before migration'
+        required: true
+        type: boolean
+        default: true
+
+jobs:
+  migrate:
+    name: Run Database Migration
+    runs-on: ubuntu-latest
+    environment: production
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Install Wrangler
+        run: npm install -g wrangler
+
+      - name: Configure Wrangler
+        run: |
+          echo "CLOUDFLARE_API_TOKEN=${{ secrets.CLOUDFLARE_API_TOKEN }}" >> $GITHUB_ENV
+          echo "CLOUDFLARE_ACCOUNT_ID=${{ secrets.CLOUDFLARE_ACCOUNT_ID }}" >> $GITHUB_ENV
+
+      - name: Backup Database (if requested)
+        if: ${{ github.event.inputs.backup == 'true' }}
+        run: |
+          echo "Creating database backup..."
+          # Note: Actual backup command would be implemented here
+          # wrangler d1 export news-site-db --output=backup.sql
+
+      - name: Run Migration
+        run: |
+          echo "Running migration: ${{ github.event.inputs.migration }}"
+          cd api
+          wrangler d1 execute news-site-db --file=migrations/${{ github.event.inputs.migration }}

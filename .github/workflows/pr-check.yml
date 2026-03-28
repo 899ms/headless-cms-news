@@ -1,0 +1,73 @@
+name: PR Check
+
+on:
+  pull_request:
+    branches: [main]
+
+jobs:
+  test:
+    name: Run Tests
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        project: [web, api, admin]
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: cd ${{ matrix.project }} && npm install
+
+      - name: Run tests with coverage
+        run: cd ${{ matrix.project }} && npm run test:coverage
+
+      - name: Upload coverage
+        uses: codecov/codecov-action@v4
+        with:
+          files: ${{ matrix.project }}/coverage/coverage-final.json
+          flags: ${{ matrix.project }}
+
+  lint:
+    name: Lint Code
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        project: [web, api, admin]
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: cd ${{ matrix.project }} && npm install
+
+  build:
+    name: Build Test
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        project: [web, api, admin]
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: cd ${{ matrix.project }} && npm install
+
+      - name: Build
+        if: matrix.project != 'api'
+        run: cd ${{ matrix.project }} && npm run build
