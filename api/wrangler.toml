@@ -4,7 +4,7 @@ compatibility_date = "2025-03-21"
 # [vars]
 # MY_VAR = "my value"
 
-# [[d1_databases]]
-# binding = "DB"
-# database_name = "news-site-db"
-# database_id = "your-database-id"
+[[d1_databases]]
+binding = "DB"
+database_name = "news-site-db"
+database_id = "64600076-bcff-4a22-bbff-d81469a6e267"
